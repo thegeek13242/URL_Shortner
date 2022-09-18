@@ -6,6 +6,7 @@ from waitress import serve
 
 app = Flask("url_shortener")
 
+DOMAIN_NAME = "http://femto.me:5000/"
 
 @app.route("/shorten", methods=["POST"])
 def shorten():
@@ -23,7 +24,9 @@ def shorten():
                  "._\\+~#?&//=]*)")
     regex_comp = re.compile(regex_url)
     if not (re.search(regex_comp, payload["url"])):
-        return "Invalid URL", 400
+        data = { "Message": "Invalid URL", "shortened_url":"" }
+        return jsonify(data), 400
+        
     hash_ = md5()
     hash_.update(payload["url"].encode())
     # limiting to 6 chars. Less the limit more the chances of collission
@@ -31,14 +34,16 @@ def shorten():
     cursor.execute(
         "SELECT COUNT(hash) FROM short WHERE hash = ?", (digest,))
     check_present = cursor.fetchall()[0][0]
-
+    url = DOMAIN_NAME + digest
     if int(check_present) == 0:
         cursor.execute("INSERT INTO short VALUES(?,?)",
                        (digest, payload["url"]))
         connection.commit()
-        return f"Shortened: /{digest}\n"
+        data = { "Message": "Success", "shortened_url":url }
+        return jsonify(data)
     else:
-        return f"Already exists: /{digest}\n"
+        data = { "Message": "Already exists", "shortened_url":url }
+        return jsonify(data)
 
 
 @app.route("/<hash_>")
