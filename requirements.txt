@@ -9,7 +9,7 @@ Cython==0.29.32
 dl==0.1.0
 docutils==0.19
 HTMLParser==0.0.2
-ipython==8.5.0
+ipython
 ipywidgets==8.0.2
 jnius==1.1.0
 keyring==23.9.1

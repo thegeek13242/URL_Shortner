@@ -1,7 +1,8 @@
-from flask import Flask, redirect, request
+from flask import Flask, redirect, jsonify, request
 from hashlib import md5
 import re
 import sqlite3
+from waitress import serve
 
 app = Flask("url_shortener")
 
@@ -12,7 +13,8 @@ def shorten():
     cursor = connection.cursor()
     payload = request.json
     if "url" not in payload:
-        return "Missing URL Parameter", 400
+        data = { "Message": "Missing URL Parameter", "shortened_url":"" }
+        return jsonify(data), 400
 
     regex_url = ("((http|https)://)(www.)?" +
                  "[a-zA-Z0-9@:%._\\+~#?&//=]" +
@@ -58,4 +60,5 @@ if __name__ == "__main__":
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS short(hash TEXT, full_url TEXT)")
     connection.commit()
-    app.run(debug=True)
+    #app.run(debug=True)
+    serve(app, host='0.0.0.0',port=5000,url_scheme='http')
