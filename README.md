@@ -2,7 +2,6 @@
 This is a free and simple URL Shortner API developed using python3 & flask.
 This API uses MD5 as hashing algorithm to calculate hash, currently only first 6 characters are stored in database with the corresponding URL.
 
-The API is currently hosted on AWS VM, the URL for the api is "http://femto.me:5000/shorten"
 
 ## Request Format
 
